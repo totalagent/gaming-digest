@@ -1,8 +1,5 @@
 ---
-layout: ../layouts/BaseLayout.astro
-title: Gaming Digest
----
-
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const posts = await getCollection('posts');
@@ -11,42 +8,44 @@ const posts = await getCollection('posts');
 posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 ---
 
-<main>
-  <h1>🎮 Gaming Digest</h1>
-  <p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p>
-  
-  <section class="content">
-    <h2>📰 最新文章</h2>
-    <ul class="post-list">
-      {posts.map((post) => (
-        <li>
-          <a href={`/posts/${post.slug}/`}>
-            {post.data.title}
-          </a>
-          <span class="post-date">
-            {post.data.publishDate.toLocaleDateString('zh-CN', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </span>
-          {post.data.description && (
-            <p class="post-description">{post.data.description}</p>
-          )}
-        </li>
-      ))}
-    </ul>
-  </section>
-  
-  <footer>
-    <p>
-      <a href="https://github.com/totalagent/gaming-digest" target="_blank">
-        GitHub 仓库
-      </a>
-      · 由 AI 自动维护
-    </p>
-  </footer>
-</main>
+<BaseLayout title="Gaming Digest">
+  <main>
+    <h1>🎮 Gaming Digest</h1>
+    <p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p>
+    
+    <section class="content">
+      <h2>📰 最新文章</h2>
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li>
+            <a href={`/posts/${post.slug}/`}>
+              {post.data.title}
+            </a>
+            <span class="post-date">
+              {post.data.publishDate.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </span>
+            {post.data.description && (
+              <p class="post-description">{post.data.description}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+    
+    <footer>
+      <p>
+        <a href="https://github.com/totalagent/gaming-digest" target="_blank">
+          GitHub 仓库
+        </a>
+        · 由 AI 自动维护
+      </p>
+    </footer>
+  </main>
+</BaseLayout>
 
 <style>
   main {

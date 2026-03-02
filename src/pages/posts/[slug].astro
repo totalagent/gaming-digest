@@ -1,7 +1,5 @@
 ---
-layout: ../../layouts/BaseLayout.astro
----
-
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -16,29 +14,31 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 ---
 
-<article class="post">
-  <header>
-    <h1>{post.data.title}</h1>
-    <p class="meta">
-      <time datetime={post.data.publishDate.toISOString()}>
-        {post.data.publishDate.toLocaleDateString('zh-CN', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })}
-      </time>
-      {post.data.source && <span class="source">· 来源：{post.data.source}</span>}
-    </p>
-  </header>
-  
-  <div class="content">
-    <Content />
-  </div>
-  
-  <footer>
-    <a href="/" class="back-link">← 返回首页</a>
-  </footer>
-</article>
+<BaseLayout title={post.data.title}>
+  <article class="post">
+    <header>
+      <h1>{post.data.title}</h1>
+      <p class="meta">
+        <time datetime={post.data.publishDate.toISOString()}>
+          {post.data.publishDate.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+        {post.data.source && <span class="source">· 来源：{post.data.source}</span>}
+      </p>
+    </header>
+    
+    <div class="content">
+      <Content />
+    </div>
+    
+    <footer>
+      <a href="/" class="back-link">← 返回首页</a>
+    </footer>
+  </article>
+</BaseLayout>
 
 <style>
   .post {
