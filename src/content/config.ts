@@ -8,6 +8,7 @@ const posts = defineCollection({
     description: z.string().optional(),
     tags: z.array(z.string()).optional(),
     source: z.string().optional(),
+    category: z.enum(['游戏动态', 'IT动态']).optional(),
   }),
 });
 

@@ -26,6 +26,7 @@ const { Content } = await post.render();
             day: 'numeric'
           })}
         </time>
+        {post.data.category && <span class="category">{post.data.category}</span>}
         {post.data.source && <span class="source">· 来源：{post.data.source}</span>}
       </p>
     </header>
@@ -68,6 +69,17 @@ const { Content } = await post.render();
   
   .source {
     color: #666;
+  }
+  
+  .category {
+    display: inline-block;
+    background: #e8f4fd;
+    color: #0066cc;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    margin-left: 0.5rem;
   }
   
   .content {
