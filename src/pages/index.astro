@@ -1,0 +1,130 @@
+---
+layout: ../layouts/BaseLayout.astro
+title: Gaming Digest
+---
+
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('posts');
+
+// 按日期排序
+posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<main>
+  <h1>🎮 Gaming Digest</h1>
+  <p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p>
+  
+  <section class="content">
+    <h2>📰 最新文章</h2>
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <a href={`/posts/${post.slug}/`}>
+            {post.data.title}
+          </a>
+          <span class="post-date">
+            {post.data.publishDate.toLocaleDateString('zh-CN', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </span>
+          {post.data.description && (
+            <p class="post-description">{post.data.description}</p>
+          )}
+        </li>
+      ))}
+    </ul>
+  </section>
+  
+  <footer>
+    <p>
+      <a href="https://github.com/totalagent/gaming-digest" target="_blank">
+        GitHub 仓库
+      </a>
+      · 由 AI 自动维护
+    </p>
+  </footer>
+</main>
+
+<style>
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+  }
+  
+  .subtitle {
+    color: #666;
+    margin-bottom: 2rem;
+  }
+  
+  .content {
+    margin-top: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .post-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .post-list li {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .post-list a {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .post-list a:hover {
+    color: #0066cc;
+  }
+  
+  .post-date {
+    color: #999;
+    font-size: 0.9rem;
+  }
+  
+  .post-description {
+    color: #666;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+  
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    color: #999;
+    font-size: 0.9rem;
+  }
+  
+  footer a {
+    color: #666;
+    text-decoration: none;
+  }
+  
+  footer a:hover {
+    color: #0066cc;
+  }
+</style>

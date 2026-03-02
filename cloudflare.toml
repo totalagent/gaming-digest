@@ -1,0 +1,17 @@
+# Cloudflare Pages 配置
+# 文档：https://developers.cloudflare.com/pages/configuration/
+
+[build]
+command = "npm run build"
+publish = "dist"
+
+[build.environment]
+NODE_VERSION = "20"
+
+# 生产环境配置
+[production]
+name = "production"
+
+# 预览分支配置
+[preview]
+name = "preview"
