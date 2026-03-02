@@ -4,7 +4,8 @@
 
 ## 🌐 访问地址
 
-- **生产环境**: [https://gaming-digest.pages.dev](https://gaming-digest.pages.dev) (待配置)
+- **官方网站**: [https://daily.aippletree.com](https://daily.aippletree.com)
+- **Cloudflare Pages**: [https://ai-gaming-digest.pages.dev](https://ai-gaming-digest.pages.dev)
 - **本地开发**: `npm run dev`
 
 ## 🚀 技术栈
@@ -57,18 +58,38 @@ npm run generate:daily
 
 ## 📅 自动化流程
 
+### 游戏行业日报（每日 6:00）
 ```
-每日早 6 点 (Cron)
+Cron 触发 (Asia/Shanghai)
     ↓
-执行抓取脚本
+抓取海外媒体数据
     ↓
-生成 Markdown 报告
+生成 Markdown 简报
     ↓
 Git Commit + Push
     ↓
 Cloudflare Pages 自动构建
     ↓
-站点更新
+网站更新 (daily.aippletree.com)
+    ↓
+发送飞书消息（含网页链接）
+```
+
+### IT 行业动态（每日 12:00）
+```
+Cron 触发 (Asia/Shanghai)
+    ↓
+抓取 InfoQ/Hacker News 等
+    ↓
+生成 Markdown 简报
+    ↓
+Git Commit + Push
+    ↓
+Cloudflare Pages 自动构建
+    ↓
+网站更新 (daily.aippletree.com)
+    ↓
+发送飞书消息（含网页链接）
 ```
 
 ## 🔧 配置
