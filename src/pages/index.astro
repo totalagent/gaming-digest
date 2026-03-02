@@ -6,6 +6,14 @@ const posts = await getCollection('posts');
 
 // 按日期排序
 posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const categories = ['游戏动态', 'IT动态'] as const;
+
+function getPostsByCategory(category: string) {
+  return posts.filter((post) => post.data.category === category);
+}
+
+const uncategorizedPosts = posts.filter((post) => !post.data.category);
 ---
 
 <BaseLayout title="Gaming Digest">
@@ -13,28 +21,59 @@ posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
     <h1>🎮 Gaming Digest</h1>
     <p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p>
     
-    <section class="content">
-      <h2>📰 最新文章</h2>
-      <ul class="post-list">
-        {posts.map((post) => (
-          <li>
-            <a href={`/posts/${post.slug}/`}>
-              {post.data.title}
-            </a>
-            <span class="post-date">
-              {post.data.publishDate.toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </span>
-            {post.data.description && (
-              <p class="post-description">{post.data.description}</p>
-            )}
-          </li>
-        ))}
-      </ul>
-    </section>
+    {categories.map((category) => {
+      const categoryPosts = getPostsByCategory(category);
+      if (categoryPosts.length === 0) return null;
+      return (
+        <section class="content">
+          <h2>{category === '游戏动态' ? '🎮' : '💻'} {category}</h2>
+          <ul class="post-list">
+            {categoryPosts.map((post) => (
+              <li>
+                <a href={`/posts/${post.slug}/`}>
+                  {post.data.title}
+                </a>
+                <span class="post-date">
+                  {post.data.publishDate.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </span>
+                {post.data.description && (
+                  <p class="post-description">{post.data.description}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })}
+
+    {uncategorizedPosts.length > 0 && (
+      <section class="content">
+        <h2>📰 其他文章</h2>
+        <ul class="post-list">
+          {uncategorizedPosts.map((post) => (
+            <li>
+              <a href={`/posts/${post.slug}/`}>
+                {post.data.title}
+              </a>
+              <span class="post-date">
+                {post.data.publishDate.toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </span>
+              {post.data.description && (
+                <p class="post-description">{post.data.description}</p>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
     
     <footer>
       <p>
