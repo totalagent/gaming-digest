@@ -42,7 +42,7 @@ const canonicalUrl = `https://aippletree.com/it/page/${currentPage}`;
     </nav>
     <nav class="breadcrumb" aria-label="breadcrumb"><ol><li><a href="/">首页</a></li><li><span>IT 动态</span></li>{currentPage > 1 && <li><span>第{currentPage}页</span></li>}</ol></nav>
     <section class="content">
-      <ul class="post-list">{posts.map((post) => (<li><div class="post-item"><a href={`/posts/${post.slug}/`} class="post-title">{post.data.title}</a><div class="post-meta"><span class="post-date">{post.data.publishDate.toLocaleDateString('zh-CN', {year: 'numeric', month: 'long', day: 'numeric'})}</span></div>{post.data.description && (<p class="post-description">{post.data.description}</p>)}</div></li>))}</ul>
+      <ul class="post-list">{posts.map((post) => (<li><div class="post-item"><a href={`/posts/${post.slug}/`} class="post-title">{post.data.title}</a><div class="post-meta"><span class="post-date">{post.data.publishDate.toLocaleString('zh-CN', {year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</span></div>{post.data.description && (<p class="post-description">{post.data.description}</p>)}</div></li>))}</ul>
       {totalPages > 1 && (<div class="pagination">{currentPage > 1 && (<a href={`/it/page/${currentPage - 1}`} class="page-btn">← 上一页</a>)}<div class="page-numbers">{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (<a href={`/it/page/${page}`} class={`page-number ${page === currentPage ? 'active' : ''}`}>{page}</a>))}</div>{currentPage < totalPages && (<a href={`/it/page/${currentPage + 1}`} class="page-btn">下一页 →</a>)}</div>)}
     </section>
     <footer><p><a href="https://github.com/totalagent/gaming-digest" target="_blank">GitHub 仓库</a>· 由 AI 自动维护</p></footer>
