@@ -10,10 +10,25 @@ allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueO
 // 分页配置
 const POSTS_PER_PAGE = 10;
 const currentPage = Astro.url.searchParams.get('page') ? parseInt(Astro.url.searchParams.get('page')!) : 1;
-const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
-const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-const endIndex = startIndex + POSTS_PER_PAGE;
-const posts = allPosts.slice(startIndex, endIndex);
+
+// 分类筛选逻辑
+const currentCategory = Astro.url.searchParams.get('category') || '';
+
+// 分类映射
+const categoryMap: Record<string, string> = {
+  '': '全部',
+  'game': '游戏动态',
+  'it': 'IT 动态',
+  'new-games': '新游发现',
+};
+
+// 反向映射
+const reverseCategoryMap: Record<string, string> = {
+  '全部': '',
+  '游戏动态': 'game',
+  'IT 动态': 'it',
+  '新游发现': 'new-games',
+};
 
 // 分类数据
 const categories = [
@@ -23,7 +38,16 @@ const categories = [
   { name: '新游发现', slug: 'new-games', count: allPosts.filter(p => p.data.category === '新游发现').length },
 ];
 
-const currentCategory = Astro.url.searchParams.get('category') || '';
+// 按分类筛选
+const filteredPosts = currentCategory 
+  ? allPosts.filter(p => p.data.category === categoryMap[currentCategory])
+  : allPosts;
+
+// 分页（基于筛选后的文章）
+const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+const endIndex = startIndex + POSTS_PER_PAGE;
+const posts = filteredPosts.slice(startIndex, endIndex);
 ---
 
 <BaseLayout title="Gaming Digest">
