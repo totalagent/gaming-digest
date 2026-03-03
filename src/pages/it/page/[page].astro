@@ -29,6 +29,15 @@ const posts = itPosts.slice(startIndex, endIndex);
 const pageTitle = 'IT 行业动态';
 const pageDescription = '精选 IT 行业动态，涵盖 InfoQ、Hacker News 等资深媒体内容。关注技术趋势、大厂动态、开源项目，为技术人员提供高质量资讯。';
 const canonicalUrl = `https://aippletree.com/it/page/${currentPage}`;
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", position: 1, name: "首页", item: "https://aippletree.com/" },
+    { "@type": "ListItem", position: 2, name: "IT 动态", item: "https://aippletree.com/it/page/1" },
+  ],
+};
 ---
 
 <SiteLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
@@ -87,6 +96,7 @@ const canonicalUrl = `https://aippletree.com/it/page/${currentPage}`;
 </style>
 
 <script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"CollectionPage","name":"IT 行业动态","description":pageDescription,"url":canonicalUrl})}></script>
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)}></script>
 
 <!-- 外部链接新窗口打开 -->
 <script>

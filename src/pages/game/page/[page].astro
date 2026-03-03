@@ -27,6 +27,15 @@ const posts = gamePosts.slice(startIndex, endIndex);
 const pageTitle = '游戏行业动态';
 const pageDescription = '每日更新游戏行业动态，包括 Steam 平台数据、游戏市场分析、大厂动向、社区热点。为游戏从业者和爱好者提供第一手资讯。';
 const canonicalUrl = `https://aippletree.com/game/page/${currentPage}`;
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", position: 1, name: "首页", item: "https://aippletree.com/" },
+    { "@type": "ListItem", position: 2, name: "游戏动态", item: "https://aippletree.com/game/page/1" },
+  ],
+};
 ---
 
 <SiteLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
@@ -85,6 +94,7 @@ const canonicalUrl = `https://aippletree.com/game/page/${currentPage}`;
 </style>
 
 <script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"CollectionPage","name":"游戏行业动态","description":pageDescription,"url":canonicalUrl})}></script>
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)}></script>
 
 <!-- 外部链接新窗口打开 -->
 <script>

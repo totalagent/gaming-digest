@@ -31,6 +31,15 @@ const posts = newGamesPosts.slice(startIndex, endIndex);
 const pageTitle = '新游发现';
 const pageDescription = '每日发现潜力新游，涵盖 Steam、itch.io 平台新作。提供游戏评测、玩法分析、发行信息，帮助玩家发现好游戏。';
 const canonicalUrl = `https://aippletree.com/new-games/page/${currentPage}`;
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", position: 1, name: "首页", item: "https://aippletree.com/" },
+    { "@type": "ListItem", position: 2, name: "新游发现", item: "https://aippletree.com/new-games/page/1" },
+  ],
+};
 ---
 
 <SiteLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
@@ -144,6 +153,7 @@ const canonicalUrl = `https://aippletree.com/new-games/page/${currentPage}`;
 </style>
 
 <script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"CollectionPage","name":"新游发现","description":pageDescription,"url":canonicalUrl})}></script>
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)}></script>
 
 <!-- 外部链接新窗口打开 -->
 <script>
