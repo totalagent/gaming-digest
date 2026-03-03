@@ -4,7 +4,7 @@ publishDate: 2026-03-02
 description: "独立游戏平台 itch.io 热门游戏推荐"
 tags: ["itch.io", "独立游戏", "游戏推荐"]
 source: "Gaming Digest"
-category: "游戏动态"
+category: 游戏动态
 ---
 
 ## 🎮 itch.io 热门游戏精选

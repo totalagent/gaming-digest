@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('posts');
-  const gamePosts = allPosts.filter(p => p.data.category === '游戏动态');
+  const gamePosts = allPosts.filter(p => p.data.category && p.data.category.includes('游戏动态'));
   const POSTS_PER_PAGE = 10;
   const totalPages = Math.ceil(gamePosts.length / POSTS_PER_PAGE) || 1;
   
@@ -29,7 +29,7 @@ const pageDescription = '每日更新游戏行业动态，包括 Steam 平台数
 const canonicalUrl = `https://aippletree.com/game/page/${currentPage}`;
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
+<SiteLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
   <main>
     <header class="header"><h1>🎮 游戏行业动态</h1><p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p></header>
     <nav class="nav">
@@ -45,7 +45,7 @@ const canonicalUrl = `https://aippletree.com/game/page/${currentPage}`;
     </section>
     <footer><p><a href="https://github.com/totalagent/gaming-digest" target="_blank">GitHub 仓库</a>· 由 AI 自动维护</p></footer>
   </main>
-</BaseLayout>
+</SiteLayout>
 
 <style>
   main { max-width: 800px; margin: 0 auto; padding: 2rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -85,3 +85,14 @@ const canonicalUrl = `https://aippletree.com/game/page/${currentPage}`;
 </style>
 
 <script type="application/ld+json" define:vars={{ pageDescription, canonicalUrl }}>{"@context":"https://schema.org","@type":"CollectionPage","name":"游戏行业动态","description":{pageDescription},"url":{canonicalUrl}}</script>
+
+<!-- 外部链接新窗口打开 -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('a[href^="http"]');
+    links.forEach(link => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+</script>

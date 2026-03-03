@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('posts');
@@ -33,14 +33,14 @@ const reverseCategoryMap: Record<string, string> = {
 // 分类数据（用于显示计数）
 const categories = [
   { name: '全部', slug: '', count: allPosts.length, url: '/' },
-  { name: '游戏动态', slug: 'game', count: allPosts.filter(p => p.data.category === '游戏动态').length, url: '/game/page/1' },
-  { name: 'IT 动态', slug: 'it', count: allPosts.filter(p => p.data.category === 'IT 动态').length, url: '/it/page/1' },
-  { name: '新游发现', slug: 'new-games', count: allPosts.filter(p => p.data.category === '新游发现').length, url: '/new-games/page/1' },
+  { name: '游戏动态', slug: 'game', count: allPosts.filter(p => p.data.category && p.data.category.includes('游戏动态')).length, url: '/game/page/1' },
+  { name: 'IT 动态', slug: 'it', count: allPosts.filter(p => p.data.category && (p.data.category.includes('IT 动态') || p.data.category.includes('IT 动态'))).length, url: '/it/page/1' },
+  { name: '新游发现', slug: 'new-games', count: allPosts.filter(p => p.data.category && p.data.category.includes('新游发现')).length, url: '/new-games/page/1' },
 ];
 
 // 按分类筛选
 const filteredPosts = currentCategory 
-  ? allPosts.filter(p => p.data.category === categoryMap[currentCategory])
+  ? allPosts.filter(p => p.data.category && p.data.category.includes(categoryMap[currentCategory]))
   : allPosts;
 
 // 分页（基于筛选后的文章）
@@ -50,7 +50,7 @@ const endIndex = startIndex + POSTS_PER_PAGE;
 const posts = filteredPosts.slice(startIndex, endIndex);
 ---
 
-<BaseLayout title="Gaming Digest">
+<SiteLayout title="Gaming Digest" description="每日游戏行业资讯精选 · AI 自动维护">
   <main>
     <header class="header">
       <h1>🎮 Gaming Digest</h1>
@@ -143,7 +143,7 @@ const posts = filteredPosts.slice(startIndex, endIndex);
       </p>
     </footer>
   </main>
-</BaseLayout>
+</SiteLayout>
 
 <style>
   main {

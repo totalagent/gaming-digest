@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -14,7 +14,7 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 ---
 
-<BaseLayout title={post.data.title}>
+<SiteLayout title={post.data.title} description={post.data.description}>
   <article class="post">
     <header>
       <h1>{post.data.title}</h1>
@@ -39,7 +39,21 @@ const { Content } = await post.render();
       <a href="/" class="back-link">← 返回首页</a>
     </footer>
   </article>
-</BaseLayout>
+  
+  <!-- 外部链接新窗口打开 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const content = document.querySelector('.content');
+      if (content) {
+        const links = content.querySelectorAll('a[href^="http"]');
+        links.forEach(link => {
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+        });
+      }
+    });
+  </script>
+</SiteLayout>
 
 <style>
   .post {
