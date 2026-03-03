@@ -19,7 +19,13 @@ const categoryUrlMap: Record<string, string> = {
   'IT 动态': '/it/page/1',
   '新游发现': '/new-games/page/1',
 };
+const categoryAbsoluteUrlMap: Record<string, string> = {
+  '游戏动态': 'https://aippletree.com/game/page/1',
+  'IT 动态': 'https://aippletree.com/it/page/1',
+  '新游发现': 'https://aippletree.com/new-games/page/1',
+};
 const categoryUrl = post.data.category ? categoryUrlMap[post.data.category] : null;
+const categoryAbsoluteUrl = post.data.category ? categoryAbsoluteUrlMap[post.data.category] : null;
 
 const canonicalUrl = `https://aippletree.com/posts/${post.slug}/`;
 const publishDateStr = post.data.publishDate.toISOString();
@@ -48,6 +54,22 @@ const jsonLd = {
     "@id": canonicalUrl
   }
 };
+
+const breadcrumbItems: { "@type": string; position: number; name: string; item: string }[] = [
+  { "@type": "ListItem", position: 1, name: "首页", item: "https://aippletree.com/" },
+];
+if (post.data.category && categoryAbsoluteUrl) {
+  breadcrumbItems.push({ "@type": "ListItem", position: 2, name: post.data.category, item: categoryAbsoluteUrl });
+  breadcrumbItems.push({ "@type": "ListItem", position: 3, name: post.data.title, item: canonicalUrl });
+} else {
+  breadcrumbItems.push({ "@type": "ListItem", position: 2, name: post.data.title, item: canonicalUrl });
+}
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": breadcrumbItems,
+};
 ---
 
 <SiteLayout
@@ -57,6 +79,13 @@ const jsonLd = {
   ogType="article"
   publishDate={publishDateStr}
 >
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <ol>
+      <li><a href="/">首页</a></li>
+      {post.data.category && categoryUrl && <li><a href={categoryUrl}>{post.data.category}</a></li>}
+      <li><span>{post.data.title}</span></li>
+    </ol>
+  </nav>
   <article class="post">
     <header>
       <h1>{post.data.title}</h1>
@@ -86,6 +115,7 @@ const jsonLd = {
   </article>
 
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)}></script>
   
   <!-- 外部链接新窗口打开 -->
   <script>
@@ -103,6 +133,46 @@ const jsonLd = {
 </SiteLayout>
 
 <style>
+  .breadcrumb {
+    max-width: 800px;
+    margin: 0 auto 1rem;
+    padding: 0 2rem;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .breadcrumb li::before {
+    content: "/";
+    margin-right: 0.5rem;
+    color: #999;
+  }
+
+  .breadcrumb li:first-child::before {
+    content: "";
+  }
+
+  .breadcrumb a {
+    color: #06c;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb span {
+    color: #666;
+  }
+
   .post {
     max-width: 800px;
     margin: 0 auto;
