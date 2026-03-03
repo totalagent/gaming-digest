@@ -12,14 +12,56 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+
+// Category → URL mapping for back link
+const categoryUrlMap: Record<string, string> = {
+  '游戏动态': '/game/page/1',
+  'IT 动态': '/it/page/1',
+  '新游发现': '/new-games/page/1',
+};
+const categoryUrl = post.data.category ? categoryUrlMap[post.data.category] : null;
+
+const canonicalUrl = `https://aippletree.com/posts/${post.slug}/`;
+const publishDateStr = post.data.publishDate.toISOString();
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": post.data.title,
+  "description": post.data.description || '',
+  "datePublished": publishDateStr,
+  "dateModified": publishDateStr,
+  "author": {
+    "@type": "Organization",
+    "name": "Gaming Digest"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Gaming Digest",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://aippletree.com/favicon.svg"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalUrl
+  }
+};
 ---
 
-<SiteLayout title={post.data.title} description={post.data.description}>
+<SiteLayout
+  title={post.data.title}
+  description={post.data.description}
+  canonical={canonicalUrl}
+  ogType="article"
+  publishDate={publishDateStr}
+>
   <article class="post">
     <header>
       <h1>{post.data.title}</h1>
       <p class="meta">
-        <time datetime={post.data.publishDate.toISOString()}>
+        <time datetime={publishDateStr}>
           {post.data.publishDate.toLocaleDateString('zh-CN', {
             year: 'numeric',
             month: 'long',
@@ -36,9 +78,14 @@ const { Content } = await post.render();
     </div>
     
     <footer>
-      <a href="/" class="back-link">← 返回首页</a>
+      {categoryUrl
+        ? <a href={categoryUrl} class="back-link">← 返回{post.data.category}</a>
+        : <a href="/" class="back-link">← 返回首页</a>
+      }
     </footer>
   </article>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
   
   <!-- 外部链接新窗口打开 -->
   <script>
