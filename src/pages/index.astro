@@ -30,12 +30,12 @@ const reverseCategoryMap: Record<string, string> = {
   '新游发现': 'new-games',
 };
 
-// 分类数据
+// 分类数据（用于显示计数）
 const categories = [
-  { name: '全部', slug: '', count: allPosts.length },
-  { name: '游戏动态', slug: 'game', count: allPosts.filter(p => p.data.category === '游戏动态').length },
-  { name: 'IT 动态', slug: 'it', count: allPosts.filter(p => p.data.category === 'IT 动态').length },
-  { name: '新游发现', slug: 'new-games', count: allPosts.filter(p => p.data.category === '新游发现').length },
+  { name: '全部', slug: '', count: allPosts.length, url: '/' },
+  { name: '游戏动态', slug: 'game', count: allPosts.filter(p => p.data.category === '游戏动态').length, url: '/game/page/1' },
+  { name: 'IT 动态', slug: 'it', count: allPosts.filter(p => p.data.category === 'IT 动态').length, url: '/it/page/1' },
+  { name: '新游发现', slug: 'new-games', count: allPosts.filter(p => p.data.category === '新游发现').length, url: '/new-games/page/1' },
 ];
 
 // 按分类筛选
@@ -61,7 +61,7 @@ const posts = filteredPosts.slice(startIndex, endIndex);
     <nav class="nav">
       {categories.map((cat) => (
         <a
-          href={`/?${cat.slug ? `category=${cat.slug}` : ''}${cat.slug && currentPage > 1 ? `&page=${currentPage}` : (currentPage > 1 ? `page=${currentPage}` : '')}`}
+          href={cat.url}
           class={`nav-item ${currentCategory === cat.slug ? 'active' : ''}`}
         >
           {cat.name}

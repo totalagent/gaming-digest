@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  const gamePosts = allPosts.filter(p => p.data.category === '游戏动态');
+  const POSTS_PER_PAGE = 10;
+  const totalPages = Math.ceil(gamePosts.length / POSTS_PER_PAGE) || 1;
+  
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: (i + 1).toString() },
+    props: { currentPage: i + 1, totalPages },
+  }));
+}
+
+const allPosts = await getCollection('posts');
+const gamePosts = allPosts.filter(p => p.data.category === '游戏动态');
+gamePosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const POSTS_PER_PAGE = 10;
+const { currentPage, totalPages } = Astro.props;
+const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+const endIndex = startIndex + POSTS_PER_PAGE;
+const posts = gamePosts.slice(startIndex, endIndex);
+
+const pageTitle = '游戏行业动态';
+const pageDescription = '每日更新游戏行业动态，包括 Steam 平台数据、游戏市场分析、大厂动向、社区热点。为游戏从业者和爱好者提供第一手资讯。';
+const canonicalUrl = `https://aippletree.com/game/page/${currentPage}`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
+  <main>
+    <header class="header"><h1>🎮 游戏行业动态</h1><p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p></header>
+    <nav class="nav">
+      <a href="/" class="nav-item">首页</a>
+      <a href="/game/page/1" class="nav-item active">游戏动态</a>
+      <a href="/it/page/1" class="nav-item">IT 动态</a>
+      <a href="/new-games/page/1" class="nav-item">新游发现</a>
+    </nav>
+    <nav class="breadcrumb"><ol><li><a href="/">首页</a></li><li><span>游戏动态</span></li>{currentPage > 1 && <li><span>第{currentPage}页</span></li>}</ol></nav>
+    <section class="content">
+      <ul class="post-list">{posts.map((post) => (<li><div class="post-item"><a href={`/posts/${post.slug}/`} class="post-title">{post.data.title}</a><div class="post-meta"><span class="post-date">{post.data.publishDate.toLocaleDateString('zh-CN', {year: 'numeric', month: 'long', day: 'numeric'})}</span></div>{post.data.description && (<p class="post-description">{post.data.description}</p>)}</div></li>))}</ul>
+      {totalPages > 1 && (<div class="pagination">{currentPage > 1 && (<a href={`/game/page/${currentPage - 1}`} class="page-btn">← 上一页</a>)}<div class="page-numbers">{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (<a href={`/game/page/${page}`} class={`page-number ${page === currentPage ? 'active' : ''}`}>{page}</a>))}</div>{currentPage < totalPages && (<a href={`/game/page/${currentPage + 1}`} class="page-btn">下一页 →</a>)}</div>)}
+    </section>
+    <footer><p><a href="https://github.com/totalagent/gaming-digest" target="_blank">GitHub 仓库</a>· 由 AI 自动维护</p></footer>
+  </main>
+</BaseLayout>
+
+<style>
+  main { max-width: 800px; margin: 0 auto; padding: 2rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .header { margin-bottom: 2rem; }
+  h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #1a1a1a; }
+  .subtitle { color: #666; font-size: 1.1rem; }
+  .nav { display: flex; gap: 0.5rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #eee; flex-wrap: wrap; }
+  .nav-item { padding: 0.5rem 1rem; border-radius: 20px; background: #f5f5f5; color: #666; text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all 0.2s; }
+  .nav-item:hover { background: #e8f4fd; color: #06c; }
+  .nav-item.active { background: #06c; color: #fff; }
+  .breadcrumb { margin-bottom: 2rem; font-size: 0.9rem; }
+  .breadcrumb ol { list-style: none; padding: 0; margin: 0; display: flex; gap: 0.5rem; }
+  .breadcrumb li::before { content: "/"; margin-right: 0.5rem; color: #999; }
+  .breadcrumb li:first-child::before { content: ""; }
+  .breadcrumb a { color: #06c; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb span { color: #666; }
+  .content { margin-top: 2rem; }
+  .post-list { list-style: none; padding: 0; }
+  .post-list li { padding: 1.5rem 0; border-bottom: 1px solid #eee; }
+  .post-item { display: flex; flex-direction: column; gap: 0.5rem; }
+  .post-title { color: #1a1a1a; text-decoration: none; font-weight: 600; font-size: 1.2rem; line-height: 1.4; transition: color 0.2s; }
+  .post-title:hover { color: #06c; }
+  .post-meta { display: flex; gap: 1rem; align-items: center; font-size: 0.9rem; }
+  .post-date { color: #999; }
+  .post-description { color: #666; margin-top: 0.5rem; line-height: 1.6; font-size: 0.95rem; }
+  .pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee; }
+  .page-btn { padding: 0.5rem 1rem; background: #f5f5f5; color: #666; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s; }
+  .page-btn:hover { background: #06c; color: #fff; }
+  .page-numbers { display: flex; gap: 0.5rem; }
+  .page-number { min-width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; background: #f5f5f5; color: #666; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s; }
+  .page-number:hover { background: #e8f4fd; color: #06c; }
+  .page-number.active { background: #06c; color: #fff; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #eee; color: #999; font-size: 0.9rem; }
+  footer a { color: #666; text-decoration: none; }
+  footer a:hover { color: #06c; }
+</style>
+
+<script type="application/ld+json" define:vars={{ pageDescription, canonicalUrl }}>{"@context":"https://schema.org","@type":"CollectionPage","name":"游戏行业动态","description":{pageDescription},"url":{canonicalUrl}}</script>
