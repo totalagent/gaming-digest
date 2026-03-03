@@ -77,12 +77,11 @@ const jsonLd = {
       <Content />
     </div>
     
-    <footer>
-      {categoryUrl
-        ? <a href={categoryUrl} class="back-link">← 返回{post.data.category}</a>
-        : <a href="/" class="back-link">← 返回首页</a>
-      }
-    </footer>
+    {categoryUrl && (
+      <footer>
+        <a href={categoryUrl} class="back-link">← 返回{post.data.category}</a>
+      </footer>
+    )}
   </article>
 
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>

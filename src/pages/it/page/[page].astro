@@ -34,18 +34,11 @@ const canonicalUrl = `https://aippletree.com/it/page/${currentPage}`;
 <SiteLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
   <main>
     <header class="header"><h1>💻 IT 行业动态</h1><p class="subtitle">每日 IT 行业资讯精选 · AI 自动维护</p></header>
-    <nav class="nav">
-      <a href="/" class="nav-item">首页</a>
-      <a href="/game/page/1" class="nav-item">游戏动态</a>
-      <a href="/it/page/1" class="nav-item active">IT 动态</a>
-      <a href="/new-games/page/1" class="nav-item">新游发现</a>
-    </nav>
     <nav class="breadcrumb" aria-label="breadcrumb"><ol><li><a href="/">首页</a></li><li><span>IT 动态</span></li>{currentPage > 1 && <li><span>第{currentPage}页</span></li>}</ol></nav>
     <section class="content">
       <ul class="post-list">{posts.map((post) => (<li><div class="post-item"><a href={`/posts/${post.slug}/`} class="post-title">{post.data.title}</a><div class="post-meta"><span class="post-date">{post.data.publishDate.toLocaleDateString('zh-CN', {year: 'numeric', month: 'long', day: 'numeric'})}</span></div>{post.data.description && (<p class="post-description">{post.data.description}</p>)}</div></li>))}</ul>
       {totalPages > 1 && (<div class="pagination">{currentPage > 1 && (<a href={`/it/page/${currentPage - 1}`} class="page-btn">← 上一页</a>)}<div class="page-numbers">{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (<a href={`/it/page/${page}`} class={`page-number ${page === currentPage ? 'active' : ''}`}>{page}</a>))}</div>{currentPage < totalPages && (<a href={`/it/page/${currentPage + 1}`} class="page-btn">下一页 →</a>)}</div>)}
     </section>
-    <footer><p><a href="https://github.com/totalagent/gaming-digest" target="_blank">GitHub 仓库</a>· 由 AI 自动维护</p></footer>
   </main>
 </SiteLayout>
 
@@ -54,10 +47,6 @@ const canonicalUrl = `https://aippletree.com/it/page/${currentPage}`;
   .header { margin-bottom: 2rem; }
   h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #1a1a1a; }
   .subtitle { color: #666; font-size: 1.1rem; }
-  .nav { display: flex; gap: 0.5rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #eee; flex-wrap: wrap; }
-  .nav-item { padding: 0.5rem 1rem; border-radius: 20px; background: #f5f5f5; color: #666; text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: all 0.2s; }
-  .nav-item:hover { background: #e8f4fd; color: #06c; }
-  .nav-item.active { background: #06c; color: #fff; }
   .breadcrumb { margin-bottom: 2rem; font-size: 0.9rem; }
   .breadcrumb ol { list-style: none; padding: 0; margin: 0; display: flex; gap: 0.5rem; }
   .breadcrumb li::before { content: "/"; margin-right: 0.5rem; color: #999; }
@@ -81,9 +70,6 @@ const canonicalUrl = `https://aippletree.com/it/page/${currentPage}`;
   .page-number { min-width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; background: #f5f5f5; color: #666; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s; }
   .page-number:hover { background: #e8f4fd; color: #06c; }
   .page-number.active { background: #06c; color: #fff; }
-  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #eee; color: #999; font-size: 0.9rem; }
-  footer a { color: #666; text-decoration: none; }
-  footer a:hover { color: #06c; }
 </style>
 
 <script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"CollectionPage","name":"IT 行业动态","description":pageDescription,"url":canonicalUrl})}></script>
