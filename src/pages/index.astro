@@ -2,37 +2,60 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const posts = await getCollection('posts');
+const allPosts = await getCollection('posts');
 
 // 按日期排序
-posts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+allPosts.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
 
-const categories = ['游戏动态', 'IT动态'] as const;
+// 分页配置
+const POSTS_PER_PAGE = 10;
+const currentPage = Astro.url.searchParams.get('page') ? parseInt(Astro.url.searchParams.get('page')!) : 1;
+const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+const endIndex = startIndex + POSTS_PER_PAGE;
+const posts = allPosts.slice(startIndex, endIndex);
 
-function getPostsByCategory(category: string) {
-  return posts.filter((post) => post.data.category === category);
-}
+// 分类数据
+const categories = [
+  { name: '全部', slug: '', count: allPosts.length },
+  { name: '游戏动态', slug: 'game', count: allPosts.filter(p => p.data.category === '游戏动态').length },
+  { name: 'IT 动态', slug: 'it', count: allPosts.filter(p => p.data.category === 'IT 动态').length },
+  { name: '新游发现', slug: 'new-games', count: allPosts.filter(p => p.data.category === '新游发现').length },
+];
 
-const uncategorizedPosts = posts.filter((post) => !post.data.category);
+const currentCategory = Astro.url.searchParams.get('category') || '';
 ---
 
 <BaseLayout title="Gaming Digest">
   <main>
-    <h1>🎮 Gaming Digest</h1>
-    <p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p>
+    <header class="header">
+      <h1>🎮 Gaming Digest</h1>
+      <p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p>
+    </header>
     
-    {categories.map((category) => {
-      const categoryPosts = getPostsByCategory(category);
-      if (categoryPosts.length === 0) return null;
-      return (
-        <section class="content">
-          <h2>{category === '游戏动态' ? '🎮' : '💻'} {category}</h2>
-          <ul class="post-list">
-            {categoryPosts.map((post) => (
-              <li>
-                <a href={`/posts/${post.slug}/`}>
-                  {post.data.title}
-                </a>
+    {/* 导航菜单 */}
+    <nav class="nav">
+      {categories.map((cat) => (
+        <a
+          href={`/?${cat.slug ? `category=${cat.slug}` : ''}${cat.slug && currentPage > 1 ? `&page=${currentPage}` : (currentPage > 1 ? `page=${currentPage}` : '')}`}
+          class={`nav-item ${currentCategory === cat.slug ? 'active' : ''}`}
+        >
+          {cat.name}
+          <span class="count">{cat.count}</span>
+        </a>
+      ))}
+    </nav>
+    
+    {/* 文章列表 */}
+    <section class="content">
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li>
+            <div class="post-item">
+              <a href={`/posts/${post.slug}/`} class="post-title">
+                {post.data.title}
+              </a>
+              <div class="post-meta">
                 <span class="post-date">
                   {post.data.publishDate.toLocaleDateString('zh-CN', {
                     year: 'numeric',
@@ -40,40 +63,52 @@ const uncategorizedPosts = posts.filter((post) => !post.data.category);
                     day: 'numeric'
                   })}
                 </span>
-                {post.data.description && (
-                  <p class="post-description">{post.data.description}</p>
+                {post.data.category && (
+                  <span class="post-category">{post.data.category}</span>
                 )}
-              </li>
-            ))}
-          </ul>
-        </section>
-      );
-    })}
-
-    {uncategorizedPosts.length > 0 && (
-      <section class="content">
-        <h2>📰 其他文章</h2>
-        <ul class="post-list">
-          {uncategorizedPosts.map((post) => (
-            <li>
-              <a href={`/posts/${post.slug}/`}>
-                {post.data.title}
-              </a>
-              <span class="post-date">
-                {post.data.publishDate.toLocaleDateString('zh-CN', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </span>
+              </div>
               {post.data.description && (
                 <p class="post-description">{post.data.description}</p>
               )}
-            </li>
-          ))}
-        </ul>
-      </section>
-    )}
+            </div>
+          </li>
+        ))}
+      </ul>
+      
+      {/* 分页 */}
+      {totalPages > 1 && (
+        <div class="pagination">
+          {currentPage > 1 && (
+            <a
+              href={`/?${currentCategory ? `category=${currentCategory}&` : ''}page=${currentPage - 1}`}
+              class="page-btn"
+            >
+              ← 上一页
+            </a>
+          )}
+          
+          <div class="page-numbers">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <a
+                href={`/?${currentCategory ? `category=${currentCategory}&` : ''}page=${page}`}
+                class={`page-number ${page === currentPage ? 'active' : ''}`}
+              >
+                {page}
+              </a>
+            ))}
+          </div>
+          
+          {currentPage < totalPages && (
+            <a
+              href={`/?${currentCategory ? `category=${currentCategory}&` : ''}page=${currentPage + 1}`}
+              class="page-btn"
+            >
+              下一页 →
+            </a>
+          )}
+        </div>
+      )}
+    </section>
     
     <footer>
       <p>
@@ -94,6 +129,10 @@ const uncategorizedPosts = posts.filter((post) => !post.data.category);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   
+  .header {
+    margin-bottom: 2rem;
+  }
+  
   h1 {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
@@ -102,17 +141,57 @@ const uncategorizedPosts = posts.filter((post) => !post.data.category);
   
   .subtitle {
     color: #666;
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
   }
   
+  /* 导航菜单 */
+  .nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+    flex-wrap: wrap;
+  }
+  
+  .nav-item {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: #f5f5f5;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+  
+  .nav-item:hover {
+    background: #e8f4fd;
+    color: #06c;
+  }
+  
+  .nav-item.active {
+    background: #06c;
+    color: #fff;
+  }
+  
+  .count {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+  }
+  
+  .nav-item.active .count {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* 文章列表 */
   .content {
     margin-top: 2rem;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #333;
   }
   
   .post-list {
@@ -125,30 +204,108 @@ const uncategorizedPosts = posts.filter((post) => !post.data.category);
     border-bottom: 1px solid #eee;
   }
   
-  .post-list a {
+  .post-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .post-title {
     color: #1a1a1a;
     text-decoration: none;
     font-weight: 600;
-    font-size: 1.1rem;
-    display: block;
-    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    line-height: 1.4;
+    transition: color 0.2s;
   }
   
-  .post-list a:hover {
-    color: #0066cc;
+  .post-title:hover {
+    color: #06c;
+  }
+  
+  .post-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.9rem;
   }
   
   .post-date {
     color: #999;
-    font-size: 0.9rem;
+  }
+  
+  .post-category {
+    background: #e8f4fd;
+    color: #06c;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
   }
   
   .post-description {
     color: #666;
     margin-top: 0.5rem;
-    line-height: 1.5;
+    line-height: 1.6;
+    font-size: 0.95rem;
   }
   
+  /* 分页 */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .page-btn {
+    padding: 0.5rem 1rem;
+    background: #f5f5f5;
+    color: #666;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .page-btn:hover {
+    background: #06c;
+    color: #fff;
+  }
+  
+  .page-numbers {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .page-number {
+    min-width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    color: #666;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .page-number:hover {
+    background: #e8f4fd;
+    color: #06c;
+  }
+  
+  .page-number.active {
+    background: #06c;
+    color: #fff;
+  }
+  
+  /* 页脚 */
   footer {
     margin-top: 3rem;
     padding-top: 1rem;
@@ -163,6 +320,38 @@ const uncategorizedPosts = posts.filter((post) => !post.data.category);
   }
   
   footer a:hover {
-    color: #0066cc;
+    color: #06c;
+  }
+  
+  /* 响应式 */
+  @media (max-width: 600px) {
+    main {
+      padding: 1rem;
+    }
+    
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .nav {
+      gap: 0.3rem;
+    }
+    
+    .nav-item {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+    }
+    
+    .pagination {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .page-numbers {
+      order: 1;
+      width: 100%;
+      justify-content: center;
+      margin: 0.5rem 0;
+    }
   }
 </style>
