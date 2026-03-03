@@ -23,20 +23,8 @@ const categoryMap: Record<string, string> = {
 };
 
 // 反向映射
-const reverseCategoryMap: Record<string, string> = {
-  '全部': '',
-  '游戏动态': 'game',
-  'IT 动态': 'it',
-  '新游发现': 'new-games',
-};
 
 // 分类数据（用于显示计数）
-const categories = [
-  { name: '全部', slug: '', count: allPosts.length, url: '/' },
-  { name: '游戏动态', slug: 'game', count: allPosts.filter(p => p.data.category && p.data.category.includes('游戏动态')).length, url: '/game/page/1' },
-  { name: 'IT 动态', slug: 'it', count: allPosts.filter(p => p.data.category && (p.data.category.includes('IT 动态') || p.data.category.includes('IT 动态'))).length, url: '/it/page/1' },
-  { name: '新游发现', slug: 'new-games', count: allPosts.filter(p => p.data.category && p.data.category.includes('新游发现')).length, url: '/new-games/page/1' },
-];
 
 // 按分类筛选
 const filteredPosts = currentCategory 
@@ -56,19 +44,6 @@ const posts = filteredPosts.slice(startIndex, endIndex);
       <h1>🎮 Gaming Digest</h1>
       <p class="subtitle">每日游戏行业资讯精选 · AI 自动维护</p>
     </header>
-    
-    {/* 导航菜单 */}
-    <nav class="nav">
-      {categories.map((cat) => (
-        <a
-          href={cat.url}
-          class={`nav-item ${currentCategory === cat.slug ? 'active' : ''}`}
-        >
-          {cat.name}
-          <span class="count">{cat.count}</span>
-        </a>
-      ))}
-    </nav>
     
     {/* 文章列表 */}
     <section class="content">
@@ -133,15 +108,6 @@ const posts = filteredPosts.slice(startIndex, endIndex);
         </div>
       )}
     </section>
-    
-    <footer>
-      <p>
-        <a href="https://github.com/totalagent/gaming-digest" target="_blank">
-          GitHub 仓库
-        </a>
-        · 由 AI 自动维护
-      </p>
-    </footer>
   </main>
 </SiteLayout>
 
@@ -166,51 +132,6 @@ const posts = filteredPosts.slice(startIndex, endIndex);
   .subtitle {
     color: #666;
     font-size: 1.1rem;
-  }
-  
-  /* 导航菜单 */
-  .nav {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #eee;
-    flex-wrap: wrap;
-  }
-  
-  .nav-item {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    background: #f5f5f5;
-    color: #666;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.2s;
-  }
-  
-  .nav-item:hover {
-    background: #e8f4fd;
-    color: #06c;
-  }
-  
-  .nav-item.active {
-    background: #06c;
-    color: #fff;
-  }
-  
-  .count {
-    background: rgba(0, 0, 0, 0.1);
-    padding: 0.1rem 0.5rem;
-    border-radius: 10px;
-    font-size: 0.8rem;
-  }
-  
-  .nav-item.active .count {
-    background: rgba(255, 255, 255, 0.2);
   }
   
   /* 文章列表 */
@@ -329,24 +250,6 @@ const posts = filteredPosts.slice(startIndex, endIndex);
     color: #fff;
   }
   
-  /* 页脚 */
-  footer {
-    margin-top: 3rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-    color: #999;
-    font-size: 0.9rem;
-  }
-  
-  footer a {
-    color: #666;
-    text-decoration: none;
-  }
-  
-  footer a:hover {
-    color: #06c;
-  }
-  
   /* 响应式 */
   @media (max-width: 600px) {
     main {
@@ -355,15 +258,6 @@ const posts = filteredPosts.slice(startIndex, endIndex);
     
     h1 {
       font-size: 2rem;
-    }
-    
-    .nav {
-      gap: 0.3rem;
-    }
-    
-    .nav-item {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.9rem;
     }
     
     .pagination {
