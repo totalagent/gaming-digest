@@ -5,7 +5,7 @@
 set -e
 
 # 配置
-WORKSPACE_DIR="/Users/somebody/.openclaw/workspace/gaming-digest"
+WORKSPACE_DIR="/Users/somebody/.openclaw/workspace/projects/gaming-digest"
 SSH_KEY="/Users/somebody/.openclaw/workspace/.ssh/gaming-digest"
 CLOUDFLARE_API_TOKEN="o2FDEOhRfzjnCj6s6nAudrnmclx-JmWhQM_p-mgf"
 CLOUDFLARE_ACCOUNT_ID="09ebba273ec7e033e136395753ccec14"
