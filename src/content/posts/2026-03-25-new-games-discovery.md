@@ -1,8 +1,10 @@
 ---
 title: "新游发现日报 - 2026 年 3 月 25 日"
-date: "2026-03-25"
-category: "新游发现"
-tags: ["Steam", "独立游戏", "新游推荐", "众筹"]
+publishDate: 2026-03-25
+description: "Steam 热门新游、独立游戏叙事佳作、Kickstarter 众筹潜力作品推荐"
+tags: ["新游发现", "Steam", "独立游戏", "众筹", "游戏推荐"]
+category: 新游发现
+source: "Gaming Digest"
 ---
 
 ## 🎮 新游发现日报 | 2026 年 3 月 25 日
